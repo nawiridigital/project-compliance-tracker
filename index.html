@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Project & Compliance Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #253347;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --accent-orange: #f97316;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            
+            --status-pending-bg: #334155;
+            --status-pending-text: #94a3b8;
+            --status-progress-bg: #fef3c7;
+            --status-progress-text: #b45309;
+            --status-completed-bg: #d1fae5;
+            --status-completed-text: #047857;
+            --status-hold-bg: #fee2e2;
+            --status-hold-text: #b91c1c;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            padding: 24px;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .executive-header {
+            max-width: 1400px;
+            margin: 0 auto 32px auto;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .executive-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-blue));
+        }
+
+        .header-info h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-info p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-info p::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        .kpi-grid {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .kpi-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px 24px;
+            min-width: 140px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .kpi-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .kpi-card .number {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .kpi-card .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .kpi-card.total .number { color: #fff; }
+        .kpi-card.pending .number { color: var(--text-muted); }
+        .kpi-card.progress .number { color: #fbbf24; }
+        .kpi-card.completed .number { color: #10b981; }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-container { grid-template-columns: 1fr; }
+            .executive-header { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media (max-width: 600px) {
+            .kpi-grid { width: 100%; justify-content: space-between; gap: 10px; }
+            .kpi-card { flex: 1; min-width: 100px; padding: 12px; }
+            .kpi-card .number { font-size: 24px; }
+        }
+
+        .section-column {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-header {
+            padding: 20px 24px;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #fff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .section-header .badge {
+            font-size: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .section-1 .section-header { border-top: 4px solid var(--accent-orange); }
+        .section-2 .section-header { border-top: 4px solid var(--accent-blue); }
+
+        .section-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .section-content::-webkit-scrollbar { width: 6px; }
+        .section-content::-webkit-scrollbar-track { background: transparent; }
+        .section-content::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+        .section-content::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        .task-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .task-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .task-owner {
+            position: relative;
+            display: inline-block;
+            min-width: 120px;
+            flex-grow: 1;
+        }
+
+        .task-owner input {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 100%;
+            padding: 4px 8px;
+            border-radius: 4px;
+            outline: none;
+            cursor: text;
+            transition: var(--transition);
+        }
+
+        .task-owner input:not([readonly]):hover, 
+        .task-owner input:not([readonly]):focus {
+            background: rgba(0,0,0,0.3);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .edit-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .edit-btn:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+        .edit-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+        
+        .save-btn {
+            background: var(--accent-green);
+            border: none;
+            color: #fff;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .save-btn:hover { background: #059669; }
+
+        .task-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .stakeholder-box {
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .stakeholder-box.editing {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .stakeholder-box .full-width { grid-column: span 2; }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-group label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input {
+            background-color: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 6px 10px;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .input-group input:disabled {
+            background-color: rgba(0,0,0,0.2);
+            border-color: transparent;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .input-group input:not(:disabled):focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .input-group input::placeholder { color: #475569; font-style: italic; }
+
+        .progress-container {
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 2px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease, background-color 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .controls { display: flex; flex-direction: column; gap: 12px; }
+
+        .control-row { display: flex; align-items: center; gap: 12px; }
+
+        .control-row label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-width: 60px;
+        }
+
+        select {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 14px;
+        }
+
+        select:disabled {
+            background-color: rgba(0,0,0,0.2);
+            border-color: transparent;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        select:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+
+        select[data-status="Pending"] { color: var(--status-pending-text); border-color: var(--border-color); }
+        select[data-status="In Progress"] { color: #fbbf24; border-color: rgba(251, 191, 36, 0.4); background-color: rgba(251, 191, 36, 0.05); }
+        select[data-status="Completed"] { color: #10b981; border-color: rgba(16, 185, 129, 0.4); background-color: rgba(16, 185, 129, 0.05); }
+        select[data-status="On Hold"] { color: #ef4444; border-color: rgba(239, 68, 68, 0.4); background-color: rgba(239, 68, 68, 0.05); }
+
+        .followup-form {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-row { display: flex; gap: 8px; }
+
+        .form-row select {
+            width: 140px;
+            flex-grow: 0;
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+
+        .form-row input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-size: 13px;
+            outline: none;
+        }
+        
+        .form-row input:focus { border-color: var(--accent-blue); }
+
+        .add-btn {
+            background-color: var(--accent-blue);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .add-btn:hover { background-color: #2563eb; }
+
+        .followup-list {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .followup-item {
+            background: rgba(255,255,255,0.03);
+            border-left: 3px solid var(--border-color);
+            padding: 10px;
+            border-radius: 4px;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .followup-item:hover { background: rgba(255,255,255,0.05); }
+
+        .followup-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-followup, .delete-followup {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .followup-item:hover .edit-followup, 
+        .followup-item:hover .delete-followup { opacity: 1; }
+
+        .edit-followup:hover { color: var(--accent-blue); }
+        .delete-followup:hover { color: #ef4444; }
+
+        .editing-followup {
+            border-left-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .editing-followup .form-row {
+            align-items: center;
+            gap: 6px;
+        }
+
+        .editing-followup select {
+            width: 120px;
+            flex-grow: 0;
+            font-size: 11px;
+            padding: 6px 8px;
+        }
+
+        .editing-followup input {
+            flex-grow: 1;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        .editing-followup .save-btn, 
+        .editing-followup .edit-btn {
+            padding: 6px 10px;
+            font-size: 11px;
+        }
+
+        .followup-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            padding-right: 40px;
+        }
+
+        .category-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+        
+        .badge-physical-visit { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge-calling { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .badge-virtual-meeting { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+        .badge-email { background: rgba(249, 115, 22, 0.2); color: #f97316; }
+        .badge-other { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+
+        .followup-date { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+        .followup-text { font-size: 13px; color: var(--text-primary); line-height: 1.4; }
+        
+        .empty-state { font-size: 12px; color: var(--text-muted); font-style: italic; text-align: center; padding: 10px; }
+
+        .history-toggle {
+            background: none;
+            border: none;
+            color: var(--accent-blue);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .history-toggle:hover { text-decoration: underline; }
+
+        .history-panel {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 15px;
+            border-left: 2px solid var(--border-color);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+        }
+
+        .timeline-date { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+        .timeline-text { font-size: 13px; color: var(--text-primary); margin-top: 4px; line-height: 1.4; }
+
+        .global-log-container {
+            max-width: 1400px;
+            margin: 32px auto 0 auto;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+            padding: 24px;
+        }
+
+        .global-log-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .log-entry {
+            display: flex;
+            gap: 20px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .log-entry:last-child { border-bottom: none; }
+
+        .log-time { font-size: 12px; color: var(--text-muted); min-width: 160px; font-weight: 500; }
+        .log-content { font-size: 14px; flex-grow: 1; color: var(--text-secondary); }
+        .log-item-name { font-weight: 700; color: var(--text-primary); margin-right: 8px; }
+        .log-action { color: var(--accent-blue); font-weight: 600; }
+
+        .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .action-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        
+        .clear-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .clear-btn:hover { background: rgba(239, 68, 68, 0.2); }
+    </style>
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+    <header class="executive-header">
+        <div class="header-info">
+            <h1>Project & Compliance Tracker</h1>
+            <p>Executive Managerial Reporting Dashboard &bull; Live Updates</p>
+        </div>
+        <div class="kpi-grid" id="kpi-dashboard">
+            <div class="kpi-card total">
+                <div class="number" id="stat-total">0</div>
+                <div class="label">Total Items</div>
+            </div>
+            <div class="kpi-card pending">
+                <div class="number" id="stat-pending">0</div>
+                <div class="label">Pending</div>
+            </div>
+            <div class="kpi-card progress">
+                <div class="number" id="stat-progress">0</div>
+                <div class="label">In Progress</div>
+            </div>
+            <div class="kpi-card completed">
+                <div class="number" id="stat-completed">0</div>
+                <div class="label">Completed</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-container" id="dashboard">
+        <!-- Columns will be dynamically injected here -->
+    </main>
+
+    <div class="global-log-container">
+        <div class="global-log-header">
+            <span>📜 Recent Activity & Achievements Log</span>
+            <div class="header-actions">
+                <button class="action-btn" onclick="exportPDF()" style="background: var(--accent-orange); border-color: var(--accent-orange);">📄 Export PDF</button>
+                <button class="action-btn" onclick="exportData()">📥 Export JSON</button>
+                <button class="action-btn" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
+                <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+                <button class="clear-btn" onclick="clearAllData()">Reset Dashboard</button>
+            </div>
+        </div>
+        <div id="global-log-content">
+            <!-- Log entries will be injected here -->
+        </div>
+    </div>
+
+    <script>
+        // --- Data Structure ---
+        const trackerData = {
+            section1: {
+                title: "Section 1",
+                items: [
+                    { id: 's1-1', owner: 'Irene', title: '1. Mama Ngina' },
+                    { id: 's1-2', owner: 'Irene', title: '2. Manara NHC' },
+                    { id: 's1-3', owner: 'Irene', title: '3. Mikatek' },
+                    { id: 's1-4', owner: 'Irene', title: '4. Asmaa' },
+                    { id: 's1-5', owner: 'Irene', title: '5. DAMAC' },
+                    { id: 's1-6', owner: 'Irene', title: '6. Kamaa Kajiado' },
+                    { id: 's1-7', owner: 'Abraham', title: '7. AMAC NSE.' },
+                    { id: 's1-8', owner: 'Abraham', title: '8. Green Fund' },
+                    { id: 's1-9', owner: 'Richard', title: '9. MSEA' },
+                    { id: 's1-10', owner: 'Elsie', title: '10. Avocadoes' },
+                    { id: 's1-11', owner: 'Elsie', title: '11. Pezesha' },
+                    { id: 's1-12', owner: 'Elsie', title: '12. Keep Vision' },
+                    { id: 's1-13', owner: 'Elsie', title: '13. Nyandarua Roads' },
+                    { id: 's1-14', owner: 'Moses', title: '14. Cheng Lee Gatundu' }
+                ]
+            },
+            section2: {
+                title: "Section 2",
+                items: [
+                    { id: 's2-1', owner: 'Tenders', title: '1. E-GP' },
+                    { id: 's2-2', owner: 'Tenders', title: '2. Solarisation' },
+                    { id: 's2-3', owner: 'Tenders', title: '3. KDC TA' },
+                    { id: 's2-4', owner: 'Tenders', title: '4. TF Resource Mobilisation' }
+                ]
+            }
+        };
+
+        // --- State Management ---
+        const STORAGE_KEY = 'executiveTrackerData';
+        let userData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        let currentlyEditingFollowup = null; 
+
+        const statusConfig = {
+            'Pending': { progress: 0, badgeClass: 'badge-pending', color: '#64748b' },
+            'In Progress': { progress: 50, badgeClass: 'badge-progress', color: '#fbbf24' },
+            'Completed': { progress: 100, badgeClass: 'badge-completed', color: '#10b981' },
+            'On Hold': { progress: 25, badgeClass: 'badge-hold', color: '#ef4444' }
+        };
+
+        // --- Core Functions ---
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+        }
+
+        function addHistory(id, action, details) {
+            if (!userData[id]) userData[id] = { status: 'Pending', followups: [], history: [] };
+            if (!userData[id].history) userData[id].history = [];
+            
+            const timestamp = new Date().toLocaleString('en-GB', { 
+                day: '2-digit', month: 'short', year: 'numeric', 
+                hour: '2-digit', minute: '2-digit' 
+            });
+
+            const logEntry = { timestamp, action, details };
+            userData[id].history.unshift(logEntry); 
+            
+            saveData();
+            renderGlobalLog();
+            renderItemHistory(id);
+        }
+
+        function renderItemHistory(id) {
+            const historyContainer = document.getElementById(`history-list-${id}`);
+            if (!historyContainer) return;
+            
+            const history = userData[id] && userData[id].history ? userData[id].history : [];
+            
+            if (history.length === 0) {
+                historyContainer.innerHTML = `<div class="timeline-text" style="color: var(--text-muted); font-style: italic;">No history recorded yet.</div>`;
+                return;
+            }
+
+            historyContainer.innerHTML = history.map(item => `
+                <div class="timeline-item">
+                    <div class="timeline-date">${item.timestamp}</div>
+                    <div class="timeline-text">
+                        <span style="color: var(--accent-blue); font-weight: 600;">${item.action}:</span> 
+                        ${item.details}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderGlobalLog() {
+            const logContainer = document.getElementById('global-log-content');
+            let allLogs = [];
+
+            Object.keys(userData).forEach(id => {
+                if (userData[id].history) {
+                    let itemTitle = id;
+                    Object.values(trackerData).forEach(section => {
+                        const found = section.items.find(i => i.id === id);
+                        if (found) itemTitle = found.title;
+                    });
+
+                    userData[id].history.forEach(entry => {
+                        allLogs.push({ ...entry, itemId: id, itemTitle: itemTitle });
+                    });
+                }
+            });
+
+            allLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            if (allLogs.length === 0) {
+                logContainer.innerHTML = `<div style="color: var(--text-muted); font-style: italic; padding: 10px;">No activities recorded yet. Start updating items to build your achievement history.</div>`;
+                return;
+            }
+
+            logContainer.innerHTML = allLogs.map(log => `
+                <div class="log-entry">
+                    <div class="log-time">${log.timestamp}</div>
+                    <div class="log-content">
+                        <span class="log-item-name">${log.itemTitle}</span>
+                        <span class="log-action">${log.action}</span>
+                        <span style="color: var(--text-muted); font-size: 13px;">&mdash; ${log.details}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.toggleHistory = function(id) {
+            const panel = document.getElementById(`history-${id}`);
+            if (panel.style.display === 'none' || panel.style.display === '') {
+                panel.style.display = 'block';
+                renderItemHistory(id);
+            } else {
+                panel.style.display = 'none';
+            }
+        };
+
+        // --- Edit Mode Logic (Main Card) ---
+        window.toggleEditMode = function(id) {
+            const card = document.getElementById(`card-${id}`);
+            const isEditing = card.classList.contains('editing');
+            const inputs = card.querySelectorAll('.stakeholder-box input, .task-owner input, #status-' + id);
+            const editBtn = document.getElementById(`edit-btn-${id}`);
+            const saveBtn = document.getElementById(`save-btn-${id}`);
+
+            if (isEditing) return; 
+
+            card.classList.add('editing');
+            inputs.forEach(input => {
+                if(input.tagName === 'SELECT') input.disabled = false;
+                else input.readOnly = false;
+            });
+            editBtn.style.display = 'none';
+            saveBtn.style.display = 'inline-block';
+        };
+
+        window.saveCardDetails = function(id) {
+            const card = document.getElementById(`card-${id}`);
+            const inputs = card.querySelectorAll('.stakeholder-box input, .task-owner input, #status-' + id);
+            
+            if (!userData[id]) userData[id] = { status: 'Pending', followups: [], history: [] };
+            const oldData = { ...userData[id] };
+            
+            let changes = [];
+
+            const ownerInput = card.querySelector('.task-owner input');
+            if (ownerInput && oldData.owner !== ownerInput.value.trim() && ownerInput.value.trim() !== '') {
+                changes.push(`Responsible Person changed from "${oldData.owner || 'Unknown'}" to "${ownerInput.value.trim()}"`);
+                userData[id].owner = ownerInput.value.trim();
+            }
+
+            const fields = {
+                'institution': 'Institution',
+                'contactPerson': 'Primary Contact',
+                'secondaryContact': 'Secondary Contact',
+                'phone': 'Phone Number',
+                'email': 'Email',
+                'officeLocation': 'Office Location'
+            };
+
+            Object.keys(fields).forEach(field => {
+                const input = card.querySelector(`input[oninput*="'${field}'"]`);
+                if (input && oldData[field] !== input.value.trim()) {
+                    changes.push(`${fields[field]} updated from "${oldData[field] || 'empty'}" to "${input.value.trim() || 'empty'}"`);
+                    userData[id][field] = input.value.trim();
+                }
+            });
+
+            const statusSelect = document.getElementById(`status-${id}`);
+            if (statusSelect && oldData.status !== statusSelect.value) {
+                changes.push(`Status changed from "${oldData.status}" to "${statusSelect.value}"`);
+                userData[id].status = statusSelect.value;
+                
+                const bar = document.getElementById(`bar-${id}`);
+                if (bar) {
+                    const config = statusConfig[statusSelect.value];
+                    bar.style.width = `${config.progress}%`;
+                    bar.style.backgroundColor = config.color;
+                }
+                const badge = document.getElementById(`badge-${id}`);
+                badge.className = `status-badge ${statusConfig[statusSelect.value].badgeClass}`;
+                badge.textContent = statusSelect.value;
+            }
+
+            if (changes.length > 0) {
+                changes.forEach(change => addHistory(id, 'Data Corrected', change));
+                saveData();
+            }
+
+            card.classList.remove('editing');
+            inputs.forEach(input => {
+                if(input.tagName === 'SELECT') input.disabled = true;
+                else input.readOnly = true;
+            });
+            
+            const editBtn = document.getElementById(`edit-btn-${id}`);
+            const saveBtn = document.getElementById(`save-btn-${id}`);
+            editBtn.style.display = 'inline-block';
+            saveBtn.style.display = 'none';
+            editBtn.classList.remove('active');
+            
+            updateDashboardMetrics();
+        };
+
+        // --- Follow-up Logic ---
+        window.addFollowup = function(id) {
+            const categoryEl = document.getElementById(`category-${id}`);
+            const textEl = document.getElementById(`followup-text-${id}`);
+            const category = categoryEl.value;
+            const text = textEl.value.trim();
+
+            if (!text) return; 
+
+            const timestamp = new Date().toLocaleString('en-GB', { 
+                day: '2-digit', month: 'short', year: 'numeric', 
+                hour: '2-digit', minute: '2-digit' 
+            });
+            
+            if (!userData[id]) userData[id] = { status: 'Pending', followups: [], history: [] };
+            if (!userData[id].followups) userData[id].followups = [];
+
+            const newEntry = { id: Date.now(), timestamp, category, text };
+            userData[id].followups.unshift(newEntry); 
+            
+            addHistory(id, 'Follow-up Added', `${category}: "${text.substring(0, 40)}${text.length > 40 ? '...' : ''}"`);
+
+            textEl.value = ''; 
+            saveData(); 
+            renderFollowups(id); 
+        };
+
+        window.editFollowup = function(itemId, followupId) {
+            currentlyEditingFollowup = { itemId, followupId };
+            renderFollowups(itemId);
+        };
+
+        window.cancelFollowupEdit = function() {
+            currentlyEditingFollowup = null;
+            Object.keys(trackerData).forEach(sectionKey => {
+                trackerData[sectionKey].items.forEach(item => {
+                    renderFollowups(item.id);
+                });
+            });
+        };
+
+        window.saveFollowupEdit = function(itemId, followupId) {
+            const categoryEl = document.getElementById(`edit-category-${followupId}`);
+            const textEl = document.getElementById(`edit-text-${followupId}`);
+            if (!categoryEl || !textEl) return;
+
+            const newCategory = categoryEl.value;
+            const newText = textEl.value.trim();
+            if (!newText) return;
+
+            const followups = userData[itemId].followups;
+            const index = followups.findIndex(f => f.id === followupId);
+            if (index === -1) return;
+
+            const oldCategory = followups[index].category;
+            const oldText = followups[index].text;
+
+            followups[index].category = newCategory;
+            followups[index].text = newText;
+            followups[index].editedAt = new Date().toLocaleString('en-GB', { 
+                day: '2-digit', month: 'short', year: 'numeric', 
+                hour: '2-digit', minute: '2-digit' 
+            });
+
+            let changeLog = '';
+            if (oldCategory !== newCategory) changeLog += `Category changed from "${oldCategory}" to "${newCategory}". `;
+            if (oldText !== newText) changeLog += `Text updated. `;
+            
+            addHistory(itemId, 'Follow-up Edited', changeLog || 'Follow-up details updated.');
+
+            currentlyEditingFollowup = null;
+            saveData();
+            renderFollowups(itemId);
+        };
+
+        window.deleteFollowup = function(itemId, followupId) {
+            if (!confirm("Are you sure you want to delete this follow-up log?")) return;
+            
+            if (userData[itemId] && userData[itemId].followups) {
+                userData[itemId].followups = userData[itemId].followups.filter(f => f.id !== followupId);
+                saveData();
+                renderFollowups(itemId);
+                addHistory(itemId, 'Follow-up Deleted', 'A follow-up log entry was removed.');
+            }
+        };
+
+        function renderFollowups(id) {
+            const listEl = document.getElementById(`followup-list-${id}`);
+            if (!listEl) return;
+            const followups = userData[id] && userData[id].followups ? userData[id].followups : [];
+            
+            if (followups.length === 0) {
+                listEl.innerHTML = `<div class="empty-state">No follow-ups recorded yet. Log one above.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = followups.map(f => {
+                const isEditing = currentlyEditingFollowup && currentlyEditingFollowup.itemId === id && currentlyEditingFollowup.followupId === f.id;
+
+                if (isEditing) {
+                    return `
+                        <div class="followup-item editing-followup">
+                            <div class="form-row">
+                                <select id="edit-category-${f.id}">
+                                    <option value="Physical Visit" ${f.category === 'Physical Visit' ? 'selected' : ''}>Physical Visit</option>
+                                    <option value="Calling" ${f.category === 'Calling' ? 'selected' : ''}>Calling</option>
+                                    <option value="Virtual Meeting" ${f.category === 'Virtual Meeting' ? 'selected' : ''}>Virtual Meeting</option>
+                                    <option value="Email" ${f.category === 'Email' ? 'selected' : ''}>Email</option>
+                                    <option value="Other" ${f.category === 'Other' ? 'selected' : ''}>Other</option>
+                                </select>
+                                <input type="text" id="edit-text-${f.id}" value="${f.text}">
+                                <button class="save-btn" onclick="saveFollowupEdit('${id}', ${f.id})">💾</button>
+                                <button class="edit-btn" onclick="cancelFollowupEdit()">✖</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="followup-item">
+                            <div class="followup-actions">
+                                <button class="edit-followup" onclick="editFollowup('${id}', ${f.id})" title="Edit this entry">✎</button>
+                                <button class="delete-followup" onclick="deleteFollowup('${id}', ${f.id})" title="Delete this entry">✖</button>
+                            </div>
+                            <div class="followup-meta">
+                                <span class="category-badge badge-${f.category.replace(/\s+/g, '-').toLowerCase()}">${f.category}</span>
+                                <span class="followup-date">${f.timestamp} ${f.editedAt ? `<span style="color: var(--accent-orange); font-size: 10px; margin-left: 5px;">(edited)</span>` : ''}</span>
+                            </div>
+                            <div class="followup-text">${f.text}</div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function renderDashboard() {
+            const container = document.getElementById('dashboard');
+            container.innerHTML = '';
+
+            Object.keys(trackerData).forEach(sectionKey => {
+                const section = trackerData[sectionKey];
+                const columnDiv = document.createElement('div');
+                columnDiv.className = `section-column`;
+                
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'section-header';
+                headerDiv.innerHTML = `
+                    <span>${section.title}</span>
+                    <span class="badge">${section.items.length} Items</span>
+                `;
+                columnDiv.appendChild(headerDiv);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'section-content';
+
+                section.items.forEach(item => {
+                    const data = userData[item.id] || { status: 'Pending', followups: [], history: [] };
+                    const config = statusConfig[data.status];
+                    
+                    const currentOwner = data.owner || item.owner;
+                    
+                    const institution = data.institution || '';
+                    const contactPerson = data.contactPerson || '';
+                    const secondaryContact = data.secondaryContact || '';
+                    const phone = data.phone || '';
+                    const email = data.email || '';
+                    const officeLocation = data.officeLocation || '';
+
+                    const card = document.createElement('div');
+                    card.className = 'task-card';
+                    card.id = `card-${item.id}`;
+                    card.innerHTML = `
+                        <div class="task-header">
+                            <div class="task-owner">
+                                <input type="text" value="${currentOwner}" readonly placeholder="Person Responsible" title="Click Edit to change">
+                            </div>
+                            <div class="task-actions">
+                                <button class="edit-btn" id="edit-btn-${item.id}" onclick="toggleEditMode('${item.id}')">✎ Edit</button>
+                                <button class="save-btn" id="save-btn-${item.id}" onclick="saveCardDetails('${item.id}')" style="display:none;">💾 Save</button>
+                                <div class="status-badge ${config.badgeClass}" id="badge-${item.id}">${data.status}</div>
+                            </div>
+                        </div>
+                        <div class="task-title">${item.title}</div>
+                        
+                        <div class="stakeholder-box" id="stakeholder-${item.id}">
+                            <div class="input-group full-width">
+                                <label>Institution / Organization</label>
+                                <input type="text" placeholder="Enter institution name" value="${institution}" readonly oninput="handleContactChange('${item.id}', 'institution', this.value)">
+                            </div>
+                            <div class="input-group full-width">
+                                <label>Primary Contact Person</label>
+                                <input type="text" placeholder="Enter contact person name" value="${contactPerson}" readonly oninput="handleContactChange('${item.id}', 'contactPerson', this.value)">
+                            </div>
+                            <div class="input-group full-width">
+                                <label>Secondary Contact Person (Optional)</label>
+                                <input type="text" placeholder="Add secondary contact if needed" value="${secondaryContact}" readonly oninput="handleContactChange('${item.id}', 'secondaryContact', this.value)">
+                            </div>
+                            <div class="input-group">
+                                <label>Phone Number</label>
+                                <input type="tel" placeholder="+254..." value="${phone}" readonly oninput="handleContactChange('${item.id}', 'phone', this.value)">
+                            </div>
+                            <div class="input-group">
+                                <label>Email Address</label>
+                                <input type="email" placeholder="name@institution.com" value="${email}" readonly oninput="handleContactChange('${item.id}', 'email', this.value)">
+                            </div>
+                            <div class="input-group full-width">
+                                <label>Physical Office Location</label>
+                                <input type="text" placeholder="Building, Street, City" value="${officeLocation}" readonly oninput="handleContactChange('${item.id}', 'officeLocation', this.value)">
+                            </div>
+                        </div>
+
+                        <div class="progress-container">
+                            <div class="progress-bar" id="bar-${item.id}" style="width: ${config.progress}%; background-color: ${config.color};"></div>
+                        </div>
+
+                        <div class="controls">
+                            <div class="control-row">
+                                <label for="status-${item.id}">Status:</label>
+                                <select id="status-${item.id}" data-status="${data.status}" disabled onchange="handleStatusChange('${item.id}', this)">
+                                    <option value="Pending" ${data.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="In Progress" ${data.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                    <option value="Completed" ${data.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                                    <option value="On Hold" ${data.status === 'On Hold' ? 'selected' : ''}>On Hold</option>
+                                </select>
+                            </div>
+                            
+                            <div class="followup-form">
+                                <div class="form-row">
+                                    <select id="category-${item.id}">
+                                        <option value="Physical Visit">Physical Visit</option>
+                                        <option value="Calling">Calling</option>
+                                        <option value="Virtual Meeting">Virtual Meeting</option>
+                                        <option value="Email">Email</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <input type="text" id="followup-text-${item.id}" placeholder="Enter follow-up details...">
+                                    <button class="add-btn" onclick="addFollowup('${item.id}')">+ Log</button>
+                                </div>
+                            </div>
+                            
+                            <div class="followup-list" id="followup-list-${item.id}">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+
+                        <button class="history-toggle" onclick="toggleHistory('${item.id}')">
+                            📜 View History & Audit Trail
+                        </button>
+                        <div class="history-panel" id="history-${item.id}">
+                            <div id="history-list-${item.id}"></div>
+                        </div>
+                    `;
+                    contentDiv.appendChild(card);
+                });
+
+                columnDiv.appendChild(contentDiv);
+                container.appendChild(columnDiv);
+            });
+
+            Object.keys(trackerData).forEach(sectionKey => {
+                trackerData[sectionKey].items.forEach(item => {
+                    renderFollowups(item.id);
+                });
+            });
+
+            updateDashboardMetrics();
+            renderGlobalLog();
+        }
+
+        window.handleContactChange = function(id, field, value) {
+            if (!userData[id]) userData[id] = { status: 'Pending', followups: [], history: [] };
+            userData[id][field] = value;
+        };
+
+        window.handleStatusChange = function(id, selectElement) {
+            // Handled by saveCardDetails
+        };
+
+        // --- NEW: PDF Export Functionality ---
+        window.exportPDF = function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4'); // Landscape A4
+            
+            // Title
+            doc.setFontSize(18);
+            doc.setTextColor(30, 41, 59); // Dark Slate
+            doc.text("Project & Compliance Executive Report", 14, 22);
+            
+            doc.setFontSize(11);
+            doc.setTextColor(100, 116, 139); // Muted Slate
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+
+            // Summary Stats
+            const total = document.getElementById('stat-total').textContent;
+            const pending = document.getElementById('stat-pending').textContent;
+            const progress = document.getElementById('stat-progress').textContent;
+            const completed = document.getElementById('stat-completed').textContent;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(15, 23, 42);
+            doc.text(`Executive Summary: Total (${total}) | Pending (${pending}) | In Progress (${progress}) | Completed (${completed})`, 14, 40);
+
+            // Prepare Table Data
+            let tableData = [];
+            
+            Object.keys(trackerData).forEach(sectionKey => {
+                const section = trackerData[sectionKey];
+                // Add Section Header Row
+                tableData.push([{ 
+                    content: section.title.toUpperCase(), 
+                    colSpan: 5, 
+                    styles: { fontStyle: 'bold', fillColor: [241, 245, 249], textColor: [15, 23, 42] } 
+                }]);
+                
+                section.items.forEach(item => {
+                    const data = userData[item.id] || { status: 'Pending', followups: [], history: [] };
+                    const currentOwner = data.owner || item.owner;
+                    const institution = data.institution || 'N/A';
+                    const status = data.status;
+                    
+                    let latestFollowup = 'No follow-ups yet';
+                    if (data.followups && data.followups.length > 0) {
+                        latestFollowup = `[${data.followups[0].category}] ${data.followups[0].text}`;
+                    }
+
+                    tableData.push([
+                        item.title,
+                        currentOwner,
+                        institution,
+                        status,
+                        latestFollowup
+                    ]);
+                });
+            });
+
+            // Generate Table
+            doc.autoTable({
+                startY: 45,
+                head: [['Project Item', 'Responsible', 'Institution', 'Status', 'Latest Development / Follow-up']],
+                body: tableData,
+                theme: 'grid',
+                styles: { fontSize: 9, cellPadding: 3, textColor: [30, 41, 59] },
+                headStyles: { fillColor: [30, 41, 59], textColor: [255, 255, 255], fontStyle: 'bold' },
+                columnStyles: {
+                    0: { cellWidth: 50 },
+                    1: { cellWidth: 30 },
+                    2: { cellWidth: 50 },
+                    3: { cellWidth: 25 },
+                    4: { cellWidth: 'auto' }
+                },
+                didDrawPage: function (data) {
+                    // Footer
+                    const str = "Page " + doc.internal.getNumberOfPages();
+                    doc.setFontSize(8);
+                    doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                }
+            });
+
+            // Save PDF
+            doc.save(`Project_Compliance_Report_${new Date().toISOString().slice(0,10)}.pdf`);
+        };
+
+        window.exportData = function() {
+            const dataStr = JSON.stringify(userData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Executive_Tracker_Backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+
+        window.importData = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (confirm("This will overwrite your current dashboard data. Are you sure?")) {
+                        userData = importedData;
+                        saveData();
+                        renderDashboard();
+                    }
+                } catch (err) {
+                    alert("Invalid backup file format.");
+                }
+            };
+            reader.readAsText(file);
+        };
+
+        window.clearAllData = function() {
+            if (confirm("Are you sure you want to clear all tracker data and history? This cannot be undone.")) {
+                localStorage.removeItem(STORAGE_KEY);
+                userData = {};
+                renderDashboard();
+            }
+        };
+
+        function updateDashboardMetrics() {
+            let total = 0;
+            let pending = 0;
+            let progress = 0;
+            let completed = 0;
+
+            Object.keys(trackerData).forEach(sectionKey => {
+                trackerData[sectionKey].items.forEach(item => {
+                    total++;
+                    const status = userData[item.id] ? userData[item.id].status : 'Pending';
+                    if (status === 'Pending') pending++;
+                    else if (status === 'In Progress') progress++;
+                    else if (status === 'Completed') completed++;
+                });
+            });
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-pending').textContent = pending;
+            document.getElementById('stat-progress').textContent = progress;
+            document.getElementById('stat-completed').textContent = completed;
+        }
+
+        // Initialize
+        renderDashboard();
+    </script>
+</body>
+</html>
