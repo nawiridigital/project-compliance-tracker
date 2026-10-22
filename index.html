@@ -3,36 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive Project & Compliance Dashboard</title>
+    <title>EXCO Reporting Dashboard</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
         :root {
-            --bg-body: #0f172a;
-            --bg-card: #1e293b;
-            --bg-card-hover: #253347;
-            --border-color: #334155;
+            --bg-body: #0b1120; 
+            --bg-card: #131e35;
+            --bg-card-hover: #1a2946;
+            --bg-modal: #131e35;
+            --border-color: #263b5e;
+            
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
             
             --accent-orange: #f97316;
-            --accent-blue: #3b82f6;
             --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-red: #ef4444;
             
-            --status-pending-bg: #334155;
+            --status-pending-bg: #1e293b;
             --status-pending-text: #94a3b8;
-            --status-progress-bg: #fef3c7;
-            --status-progress-text: #b45309;
-            --status-completed-bg: #d1fae5;
-            --status-completed-text: #047857;
-            --status-hold-bg: #fee2e2;
-            --status-hold-text: #b91c1c;
+            --status-progress-bg: #422006;
+            --status-progress-text: #fbbf24;
+            --status-completed-bg: #064e3b;
+            --status-completed-text: #34d399;
             
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.8), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            --transition: all 0.2s ease-in-out;
         }
 
         * {
@@ -45,530 +45,492 @@
         body {
             background-color: var(--bg-body);
             color: var(--text-primary);
-            padding: 24px;
+            padding: 40px 24px;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* --- Executive Header --- */
         .executive-header {
             max-width: 1400px;
-            margin: 0 auto 32px auto;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 32px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .executive-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-orange), var(--accent-blue));
+            margin: 0 auto 30px auto;
+            text-align: left;
         }
 
         .header-info h1 {
-            font-size: 28px;
+            font-size: 38px;
             font-weight: 800;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-            background: linear-gradient(to right, #ffffff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+            color: #fff;
+            line-height: 1.2;
         }
 
         .header-info p {
-            font-size: 14px;
+            font-size: 16px;
             color: var(--text-secondary);
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .header-info p::before {
             content: '';
             display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: #10b981;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-green);
             border-radius: 50%;
-            box-shadow: 0 0 8px #10b981;
+            box-shadow: 0 0 12px var(--accent-green);
         }
 
-        .kpi-grid {
+        /* --- Master List (At a Glance List) --- */
+        .master-list-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto 40px auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .master-section-header {
+            font-size: 18px;
+            font-weight: 700;
+            padding: 16px 24px;
+            color: white;
+        }
+
+        .master-section-header.sec1 { background-color: var(--accent-orange); }
+        .master-section-header.sec2 { background-color: #4ade80; }
+
+        .master-column {
+            padding: 24px;
+        }
+
+        .master-column:first-child {
+            border-right: 2px solid var(--border-color);
+        }
+
+        .master-project-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 8px 20px;
+        }
+
+        .master-column.sec2-list .master-project-list {
+            grid-template-columns: 1fr;
+        }
+
+        .list-item {
+            font-size: 14px;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
             display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .list-item:hover {
+            background: rgba(59, 130, 246, 0.15);
+            transform: translateX(4px);
+        }
+        
+        .list-item .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+
+        /* --- KPI Dashboard Layout --- */
+        .kpi-layout {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto 40px auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 20px;
+            align-items: stretch;
         }
 
         .kpi-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 16px 24px;
-            min-width: 140px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
             text-align: center;
-            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: transparent;
             transition: var(--transition);
         }
 
-        .kpi-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            transform: translateY(-2px);
-        }
+        .kpi-card:hover { background: var(--bg-card-hover); transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .kpi-card.active { background: var(--bg-card-hover); border-color: var(--accent-blue); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+        .kpi-card.active::before { background: var(--accent-blue); }
 
         .kpi-card .number {
-            font-size: 32px;
+            font-size: 56px;
             font-weight: 800;
             line-height: 1;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             color: #fff;
         }
 
         .kpi-card .label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        .kpi-card.total .number { color: #fff; }
-        .kpi-card.pending .number { color: var(--text-muted); }
-        .kpi-card.progress .number { color: #fbbf24; }
-        .kpi-card.completed .number { color: #10b981; }
-
-        .dashboard-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-            align-items: start;
-        }
-
-        @media (max-width: 900px) {
-            .dashboard-container { grid-template-columns: 1fr; }
-            .executive-header { flex-direction: column; align-items: flex-start; }
-        }
-
-        @media (max-width: 600px) {
-            .kpi-grid { width: 100%; justify-content: space-between; gap: 10px; }
-            .kpi-card { flex: 1; min-width: 100px; padding: 12px; }
-            .kpi-card .number { font-size: 24px; }
-        }
-
-        .section-column {
-            background: var(--bg-card);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .section-header {
-            padding: 20px 24px;
-            font-size: 16px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #fff;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0,0,0,0.2);
-        }
-
-        .section-header .badge {
             font-size: 12px;
-            background: rgba(255,255,255,0.1);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             color: var(--text-secondary);
+            font-weight: 700;
         }
 
-        .section-1 .section-header { border-top: 4px solid var(--accent-orange); }
-        .section-2 .section-header { border-top: 4px solid var(--accent-blue); }
+        .kpi-card.pending .number { color: #94a3b8; }
+        .kpi-card.progress .number { color: #fbbf24; }
+        .kpi-card.completed .number { color: #34d399; }
 
-        .section-content {
+        /* --- Project Grid --- */
+        .section-title {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto 20px auto;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .dashboard-grid {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto 40px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* --- Project Cards --- */
+        .task-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             padding: 20px;
+            cursor: pointer;
+            transition: var(--transition);
             display: flex;
             flex-direction: column;
             gap: 16px;
-            max-height: 800px;
-            overflow-y: auto;
-        }
-
-        .section-content::-webkit-scrollbar { width: 6px; }
-        .section-content::-webkit-scrollbar-track { background: transparent; }
-        .section-content::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
-        .section-content::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-        .task-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
-            transition: var(--transition);
-            position: relative;
         }
 
         .task-card:hover {
             background: var(--bg-card-hover);
-            border-color: rgba(255,255,255,0.15);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
             box-shadow: var(--shadow-sm);
         }
 
-        .task-header {
+        .card-top {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 12px;
-            gap: 10px;
         }
 
-        .task-owner {
-            position: relative;
-            display: inline-block;
-            min-width: 120px;
-            flex-grow: 1;
-        }
-
-        .task-owner input {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--text-muted);
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            width: 100%;
-            padding: 4px 8px;
-            border-radius: 4px;
-            outline: none;
-            cursor: text;
-            transition: var(--transition);
-        }
-
-        .task-owner input:not([readonly]):hover, 
-        .task-owner input:not([readonly]):focus {
-            background: rgba(0,0,0,0.3);
-            border-color: var(--border-color);
-            color: var(--text-primary);
-        }
-
-        .task-actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .edit-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .edit-btn:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
-        .edit-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
-        
-        .save-btn {
-            background: var(--accent-green);
-            border: none;
-            color: #fff;
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-        .save-btn:hover { background: #059669; }
-
-        .task-title {
+        .card-title {
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-primary);
             line-height: 1.4;
             flex-grow: 1;
+            padding-right: 10px;
         }
 
-        .stakeholder-box {
-            background: rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 16px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            transition: var(--transition);
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
         }
+        .badge-pending { background: var(--status-pending-bg); color: var(--status-pending-text); }
+        .badge-progress { background: var(--status-progress-bg); color: var(--status-progress-text); }
+        .badge-completed { background: var(--status-completed-bg); color: var(--status-completed-text); }
+        .badge-hold { background: #450a0a; color: #f87171; }
 
-        .stakeholder-box.editing {
-            border-color: var(--accent-blue);
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .stakeholder-box .full-width { grid-column: span 2; }
-
-        .input-group {
+        .card-details {
+            font-size: 13px;
+            color: var(--text-secondary);
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
 
-        .input-group label {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .card-details strong { color: var(--text-muted); font-weight: 600; }
 
-        .input-group input {
-            background-color: var(--bg-body);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 6px 10px;
-            color: var(--text-primary);
-            font-size: 12px;
-            font-family: inherit;
-            outline: none;
-            transition: var(--transition);
-        }
-
-        .input-group input:disabled {
-            background-color: rgba(0,0,0,0.2);
-            border-color: transparent;
-            color: var(--text-secondary);
-            cursor: not-allowed;
-        }
-
-        .input-group input:not(:disabled):focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-        }
-
-        .input-group input::placeholder { color: #475569; font-style: italic; }
-
-        .progress-container {
-            height: 4px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 2px;
-            margin-bottom: 16px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            transition: width 0.5s ease, background-color 0.3s ease;
-            border-radius: 2px;
-        }
-
-        .controls { display: flex; flex-direction: column; gap: 12px; }
-
-        .control-row { display: flex; align-items: center; gap: 12px; }
-
-        .control-row label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            min-width: 60px;
-        }
-
-        select {
-            flex-grow: 1;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-body);
-            color: var(--text-primary);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            outline: none;
-            transition: var(--transition);
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 14px;
-        }
-
-        select:disabled {
-            background-color: rgba(0,0,0,0.2);
-            border-color: transparent;
-            color: var(--text-secondary);
-            cursor: not-allowed;
-        }
-
-        select:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
-
-        select[data-status="Pending"] { color: var(--status-pending-text); border-color: var(--border-color); }
-        select[data-status="In Progress"] { color: #fbbf24; border-color: rgba(251, 191, 36, 0.4); background-color: rgba(251, 191, 36, 0.05); }
-        select[data-status="Completed"] { color: #10b981; border-color: rgba(16, 185, 129, 0.4); background-color: rgba(16, 185, 129, 0.05); }
-        select[data-status="On Hold"] { color: #ef4444; border-color: rgba(239, 68, 68, 0.4); background-color: rgba(239, 68, 68, 0.05); }
-
-        .followup-form {
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .form-row { display: flex; gap: 8px; }
-
-        .form-row select {
-            width: 140px;
-            flex-grow: 0;
-            font-size: 12px;
-            padding: 6px 10px;
-        }
-
-        .form-row input {
-            flex-grow: 1;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-body);
-            color: var(--text-primary);
-            font-size: 13px;
-            outline: none;
-        }
-        
-        .form-row input:focus { border-color: var(--accent-blue); }
-
-        .add-btn {
-            background-color: var(--accent-blue);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .add-btn:hover { background-color: #2563eb; }
-
-        .followup-list {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 200px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .followup-item {
-            background: rgba(255,255,255,0.03);
-            border-left: 3px solid var(--border-color);
-            padding: 10px;
-            border-radius: 4px;
-            position: relative;
-            transition: var(--transition);
-        }
-
-        .followup-item:hover { background: rgba(255,255,255,0.05); }
-
-        .followup-actions {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 8px;
-        }
-
-        .edit-followup, .delete-followup {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 12px;
-            cursor: pointer;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .followup-item:hover .edit-followup, 
-        .followup-item:hover .delete-followup { opacity: 1; }
-
-        .edit-followup:hover { color: var(--accent-blue); }
-        .delete-followup:hover { color: #ef4444; }
-
-        .editing-followup {
-            border-left-color: var(--accent-blue);
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .editing-followup .form-row {
-            align-items: center;
-            gap: 6px;
-        }
-
-        .editing-followup select {
-            width: 120px;
-            flex-grow: 0;
-            font-size: 11px;
-            padding: 6px 8px;
-        }
-
-        .editing-followup input {
-            flex-grow: 1;
-            padding: 6px 10px;
-            font-size: 12px;
-        }
-
-        .editing-followup .save-btn, 
-        .editing-followup .edit-btn {
-            padding: 6px 10px;
-            font-size: 11px;
-        }
-
-        .followup-meta {
+        .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
-            padding-right: 40px;
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
-        .category-badge {
-            font-size: 10px;
+        .owner-tag {
+            font-size: 11px;
             font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 10px;
-            text-transform: uppercase;
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
         }
+
+        .followup-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* --- Footer Action Buttons --- */
+        .footer-actions-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 20px auto 0 auto;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px;
+        }
+        .action-btn:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255,255,255,0.3); transform: translateY(-2px); }
+        .action-btn.primary { background: var(--accent-blue); border-color: var(--accent-blue); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        .action-btn.primary:hover { background: #2563eb; box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4); }
+        .action-btn.clear-btn { background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
+        .action-btn.clear-btn:hover { background: rgba(239, 68, 68, 0.2); }
+
+        /* --- Modal / Popup System --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: var(--bg-modal);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+            animation: scaleIn 0.2s ease-out;
+        }
+
+        @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { font-size: 20px; font-weight: 800; color: #fff; }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 28px;
+            cursor: pointer;
+            transition: var(--transition);
+            line-height: 1;
+        }
+        .close-btn:hover { color: #fff; }
+
+        .modal-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.2);
+        }
+
+        .modal-tab {
+            flex: 1;
+            padding: 16px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        .modal-tab:hover { color: var(--text-primary); }
+        .modal-tab.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); background: rgba(59, 130, 246, 0.05); }
+
+        .modal-body { padding: 24px; overflow-y: auto; flex-grow: 1; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Forms */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-grid .full-width { grid-column: span 2; }
+
+        .input-group { display: flex; flex-direction: column; gap: 6px; }
+        .input-group label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-group input, .input-group select {
+            background-color: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+            width: 100%;
+        }
+        .input-group input:focus, .input-group select:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); }
+
+        .modal-actions {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+        .btn-primary { background: var(--accent-blue); color: #fff; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: var(--accent-green); color: #fff; }
+        .btn-success:hover { background: #059669; }
+
+        /* Updated Log Form */
+        .log-form {
+            display: flex; 
+            flex-direction: column;
+            gap: 12px; 
+            margin-bottom: 24px; 
+            background: rgba(0,0,0,0.2);
+            padding: 16px; 
+            border-radius: 8px; 
+            border: 1px solid var(--border-color);
+        }
+        
+        .log-form-top {
+            display: flex;
+            gap: 10px;
+        }
+
+        .log-form select { 
+            width: 200px; 
+            flex-shrink: 0; 
+            background-color: var(--bg-body); 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            padding: 12px; 
+            color: var(--text-primary); 
+            outline: none;
+        }
+
+        .auto-expand-textarea {
+            width: 100%;
+            background-color: var(--bg-body); 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            padding: 12px; 
+            color: var(--text-primary); 
+            outline: none;
+            resize: none; 
+            overflow: hidden; 
+            min-height: 45px;
+            max-height: 200px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .auto-expand-textarea:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .log-form-bottom {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .followup-list { display: flex; flex-direction: column; gap: 12px; }
+        .followup-item {
+            background: rgba(255,255,255,0.02); border-left: 4px solid var(--border-color);
+            padding: 16px; border-radius: 6px; position: relative;
+        }
+        .followup-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .category-badge { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; }
         
         .badge-physical-visit { background: rgba(16, 185, 129, 0.2); color: #10b981; }
         .badge-calling { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
@@ -576,121 +538,23 @@
         .badge-email { background: rgba(249, 115, 22, 0.2); color: #f97316; }
         .badge-other { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
 
-        .followup-date { font-size: 11px; color: var(--text-muted); font-weight: 500; }
-        .followup-text { font-size: 13px; color: var(--text-primary); line-height: 1.4; }
-        
-        .empty-state { font-size: 12px; color: var(--text-muted); font-style: italic; text-align: center; padding: 10px; }
+        .followup-date { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+        .followup-text { font-size: 14px; color: var(--text-primary); line-height: 1.5; white-space: pre-wrap; }
 
-        .history-toggle {
-            background: none;
-            border: none;
-            color: var(--accent-blue);
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 0;
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        @media (max-width: 1100px) {
+            .kpi-layout { grid-template-columns: 1fr 1fr; }
+            .master-list-container { grid-template-columns: 1fr; }
+            .master-column:first-child { border-right: none; border-bottom: 2px solid var(--border-color); }
         }
-        .history-toggle:hover { text-decoration: underline; }
-
-        .history-panel {
-            display: none;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed var(--border-color);
+        @media (max-width: 600px) {
+            .kpi-layout { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grid .full-width { grid-column: span 1; }
+            .log-form-top { flex-direction: column; }
+            .log-form select { width: 100%; }
+            .footer-actions-container { flex-direction: column; }
+            .action-btn { width: 100%; justify-content: center; }
         }
-
-        .timeline-item {
-            position: relative;
-            padding-left: 20px;
-            margin-bottom: 15px;
-            border-left: 2px solid var(--border-color);
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -6px;
-            top: 0;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--accent-blue);
-        }
-
-        .timeline-date { font-size: 11px; color: var(--text-muted); font-weight: 600; }
-        .timeline-text { font-size: 13px; color: var(--text-primary); margin-top: 4px; line-height: 1.4; }
-
-        .global-log-container {
-            max-width: 1400px;
-            margin: 32px auto 0 auto;
-            background: var(--bg-card);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-lg);
-            padding: 24px;
-        }
-
-        .global-log-header {
-            font-size: 18px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .log-entry {
-            display: flex;
-            gap: 20px;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .log-entry:last-child { border-bottom: none; }
-
-        .log-time { font-size: 12px; color: var(--text-muted); min-width: 160px; font-weight: 500; }
-        .log-content { font-size: 14px; flex-grow: 1; color: var(--text-secondary); }
-        .log-item-name { font-weight: 700; color: var(--text-primary); margin-right: 8px; }
-        .log-action { color: var(--accent-blue); font-weight: 600; }
-
-        .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-        
-        .action-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .action-btn:hover { background: rgba(255, 255, 255, 0.2); }
-        
-        .clear-btn {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .clear-btn:hover { background: rgba(239, 68, 68, 0.2); }
     </style>
     <!-- PDF Generation Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -700,695 +564,633 @@
 
     <header class="executive-header">
         <div class="header-info">
-            <h1>Project & Compliance Tracker</h1>
-            <p>Executive Managerial Reporting Dashboard &bull; Live Updates</p>
-        </div>
-        <div class="kpi-grid" id="kpi-dashboard">
-            <div class="kpi-card total">
-                <div class="number" id="stat-total">0</div>
-                <div class="label">Total Items</div>
-            </div>
-            <div class="kpi-card pending">
-                <div class="number" id="stat-pending">0</div>
-                <div class="label">Pending</div>
-            </div>
-            <div class="kpi-card progress">
-                <div class="number" id="stat-progress">0</div>
-                <div class="label">In Progress</div>
-            </div>
-            <div class="kpi-card completed">
-                <div class="number" id="stat-completed">0</div>
-                <div class="label">Completed</div>
-            </div>
+            <h1>EXCO Reporting Dashboard</h1>
+            <p>Executive Reporting &bull; Live Updates &bull; Matched with PDF</p>
         </div>
     </header>
 
-    <main class="dashboard-container" id="dashboard">
-        <!-- Columns will be dynamically injected here -->
-    </main>
-
-    <div class="global-log-container">
-        <div class="global-log-header">
-            <span>📜 Recent Activity & Achievements Log</span>
-            <div class="header-actions">
-                <button class="action-btn" onclick="exportPDF()" style="background: var(--accent-orange); border-color: var(--accent-orange);">📄 Export PDF</button>
-                <button class="action-btn" onclick="exportData()">📥 Export JSON</button>
-                <button class="action-btn" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
-                <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
-                <button class="clear-btn" onclick="clearAllData()">Reset Dashboard</button>
+    <!-- COMPLETE ITEM LIST JUST AFTER HEADER -->
+    <div class="master-list-container">
+        <!-- Section 1 Column -->
+        <div class="master-column">
+            <div class="master-section-header sec1">Section 1</div>
+            <div class="master-project-list" id="master-list-1">
+                <!-- Populated by JS -->
             </div>
         </div>
-        <div id="global-log-content">
-            <!-- Log entries will be injected here -->
+        
+        <!-- Section 2 Column -->
+        <div class="master-column sec2-list">
+            <div class="master-section-header sec2">Section 2</div>
+            <div class="master-section-title" style="color: var(--accent-blue); margin: 10px 0 15px 10px; font-size: 16px; font-weight: 700;">Tenders</div>
+            <div class="master-project-list" id="master-list-2">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Filter Layout -->
+    <div class="kpi-layout" id="kpi-dashboard">
+        <div class="kpi-card total active" id="filter-All" onclick="setFilter('All')">
+            <div class="number" id="stat-total">29</div>
+            <div class="label">Total Projects</div>
+        </div>
+        <div class="kpi-card pending" id="filter-Pending" onclick="setFilter('Pending')">
+            <div class="number" id="stat-pending">0</div>
+            <div class="label">Pending</div>
+        </div>
+        <div class="kpi-card progress" id="filter-InProgress" onclick="setFilter('In Progress')">
+            <div class="number" id="stat-progress">0</div>
+            <div class="label">In Progress</div>
+        </div>
+        <div class="kpi-card completed" id="filter-Completed" onclick="setFilter('Completed')">
+            <div class="number" id="stat-completed">0</div>
+            <div class="label">Completed</div>
+        </div>
+    </div>
+
+    <!-- Filtered Project Display -->
+    <div class="section-title" id="view-title">Showing: All Projects</div>
+    <main class="dashboard-grid" id="project-grid">
+        <!-- Cards injected via JS -->
+    </main>
+
+    <!-- FOOTER ACTION BUTTONS -->
+    <div class="footer-actions-container">
+        <button class="action-btn primary" onclick="exportPDF()">📄 Export PDF Analysis</button>
+        <button class="action-btn" onclick="exportData()">📥 Export Data (JSON)</button>
+        <button class="action-btn" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
+        <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+        <button class="action-btn clear-btn" onclick="clearAllData()">Reset Data</button>
+    </div>
+
+    <!-- Modal / Popup System -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Project Title</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            
+            <div class="modal-tabs">
+                <div class="modal-tab active" onclick="switchTab('details')">📋 Details & Edit</div>
+                <div class="modal-tab" onclick="switchTab('followup')">📝 Follow-up Log</div>
+            </div>
+
+            <div class="modal-body">
+                <!-- Tab 1: Details -->
+                <div class="tab-content active" id="tab-details">
+                    <div class="form-grid">
+                        <div class="input-group full-width">
+                            <label>Person Responsible</label>
+                            <input type="text" id="edit-owner">
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Institution / Organization</label>
+                            <input type="text" id="edit-institution" placeholder="Enter institution name">
+                        </div>
+                        <div class="input-group">
+                            <label>Primary Contact Person</label>
+                            <input type="text" id="edit-contactPerson" placeholder="Name">
+                        </div>
+                        <div class="input-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="edit-phone" placeholder="+254...">
+                        </div>
+                        <div class="input-group">
+                            <label>Secondary Contact</label>
+                            <input type="text" id="edit-secondaryContact" placeholder="Name">
+                        </div>
+                        <div class="input-group">
+                            <label>Email Address</label>
+                            <input type="email" id="edit-email" placeholder="name@institution.com">
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Current Status</label>
+                            <select id="edit-status">
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                                <option value="On Hold">On Hold</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-actions" style="border:none; padding: 20px 0 0 0;">
+                        <button class="btn btn-success" onclick="saveDetails()">💾 Save Changes</button>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Follow-ups -->
+                <div class="tab-content" id="tab-followup">
+                    <div class="log-form">
+                        <div class="log-form-top">
+                            <select id="log-category">
+                                <option value="Physical Visit">Physical Visit</option>
+                                <option value="Calling">Calling</option>
+                                <option value="Virtual Meeting">Virtual Meeting</option>
+                                <option value="Email">Email</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <textarea id="log-text" class="auto-expand-textarea" rows="1" placeholder="Enter follow-up details..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+                        </div>
+                        <div class="log-form-bottom">
+                            <button class="btn btn-primary" onclick="addFollowup()">+ Add Log</button>
+                        </div>
+                    </div>
+                    <div class="followup-list" id="modal-followup-list">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- Data Structure ---
-        const trackerData = {
-            section1: {
-                title: "Section 1",
-                items: [
-                    { id: 's1-1', owner: 'Irene', title: '1. Mama Ngina' },
-                    { id: 's1-2', owner: 'Irene', title: '2. Manara NHC' },
-                    { id: 's1-3', owner: 'Irene', title: '3. Mikatek' },
-                    { id: 's1-4', owner: 'Irene', title: '4. Asmaa' },
-                    { id: 's1-5', owner: 'Irene', title: '5. DAMAC' },
-                    { id: 's1-6', owner: 'Irene', title: '6. Kamaa Kajiado' },
-                    { id: 's1-7', owner: 'Abraham', title: '7. AMAC NSE.' },
-                    { id: 's1-8', owner: 'Abraham', title: '8. Green Fund' },
-                    { id: 's1-9', owner: 'Richard', title: '9. MSEA' },
-                    { id: 's1-10', owner: 'Elsie', title: '10. Avocadoes' },
-                    { id: 's1-11', owner: 'Elsie', title: '11. Pezesha' },
-                    { id: 's1-12', owner: 'Elsie', title: '12. Keep Vision' },
-                    { id: 's1-13', owner: 'Elsie', title: '13. Nyandarua Roads' },
-                    { id: 's1-14', owner: 'Moses', title: '14. Cheng Lee Gatundu' }
-                ]
-            },
-            section2: {
-                title: "Section 2",
-                items: [
-                    { id: 's2-1', owner: 'Tenders', title: '1. E-GP' },
-                    { id: 's2-2', owner: 'Tenders', title: '2. Solarisation' },
-                    { id: 's2-3', owner: 'Tenders', title: '3. KDC TA' },
-                    { id: 's2-4', owner: 'Tenders', title: '4. TF Resource Mobilisation' }
-                ]
-            }
+        // --- Data Structure perfectly matching the image + PDF ---
+        const baseData = {
+            section1: [
+                { id: 's1-1', owner: 'Irene', title: '1. DAMAC' },
+                { id: 's1-2', owner: 'Elsie', title: '2. Avocadoes' },
+                { id: 's1-3', owner: 'Richard', title: '3. MSEA' },
+                { id: 's1-4', owner: 'Elsie', title: '4. Nyandarua Roads' }, // PDF Name
+                { id: 's1-5', owner: 'Irene', title: '5. Kamaa Kajjado' }, // PDF Name
+                { id: 's1-6', owner: 'Moses', title: '6. Cheng Lee Gatundu' }, // PDF Name
+                { id: 's1-7', owner: 'Irene', title: '7. Mama Ngina University' },
+                { id: 's1-8', owner: 'Irene', title: '8. Mikatek' },
+                { id: 's1-9', owner: 'Irene', title: '9. Manara NHC' },
+                { id: 's1-10', owner: 'Elsie', title: '10. Keep Vision' },
+                { id: 's1-11', owner: 'Unassigned', title: '11. Samburu Kerra' },
+                { id: 's1-12', owner: 'Unassigned', title: '12. New Kerra Ad' },
+                { id: 's1-13', owner: 'Unassigned', title: '13. Gatundu Town AHP' },
+                { id: 's1-14', owner: 'Unassigned', title: '14. Mundoro Market' },
+                { id: 's1-15', owner: 'Unassigned', title: '15. Karatu Market' },
+                { id: 's1-16', owner: 'Unassigned', title: '16. Gatundu TVET Hostels' },
+                { id: 's1-17', owner: 'Unassigned', title: '17. Juja Kenyatta Road AHP' },
+                { id: 's1-18', owner: 'Unassigned', title: '18. 63 Street Lights' },
+                { id: 's1-19', owner: 'Unassigned', title: '19. Award of Mama Ngina University Hostels' },
+                { id: 's1-20', owner: 'Unassigned', title: '20. Gatundu RWC 1059' },
+                { id: 's1-21', owner: 'Unassigned', title: '21. Gatundu New Special Road' },
+                // --- Items from PDF not in original image ---
+                { id: 's1-22', owner: 'Irene', title: '22. Asmaa' },
+                { id: 's1-23', owner: 'Abraham', title: '23. AMAC NSE.' },
+                { id: 's1-24', owner: 'Abraham', title: '24. Green Fund' },
+                { id: 's1-25', owner: 'Elsie', title: '25. Pezesha' }
+            ],
+            section2: [
+                { id: 's2-1', owner: 'Tenders', title: '1. E-GP' },
+                { id: 's2-2', owner: 'Tenders', title: '2. Solarisation' },
+                { id: 's2-3', owner: 'Tenders', title: '3. TF Resource Mobilisation' },
+                // --- Item from PDF not in original image ---
+                { id: 's2-4', owner: 'Tenders', title: '4. KDC TA' }
+            ]
         };
 
-        // --- State Management ---
-        const STORAGE_KEY = 'executiveTrackerData';
-        let userData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-        let currentlyEditingFollowup = null; 
+        // Pre-mapped data strictly from the PDF report
+        const preloadedData = {
+            's1-7': { status: 'In Progress', institution: 'N/A', followups: [{ category: 'Physical Visit', text: 'I will be following up with QS Mary I will find her office and a physical meeting will work better for the followup', date: '10/19/2026, 12:21:09 AM' }] },
+            's1-9': { status: 'In Progress', institution: 'N/A', followups: [{ category: 'Physical Visit', text: 'The visit that was to be done on 12th happened on Friday 16th and QS Methu is holding a brief for Waziri about the visit. Abdul was supportive he showed his project to QS Methu in Parklands', date: '10/19/2026, 12:21:09 AM' }] },
+            's1-8': { status: 'In Progress', institution: 'N/A', followups: [{ category: 'Physical Visit', text: 'Kimnage and boss are following up', date: '10/19/2026, 12:21:09 AM' }] },
+            's1-22': { status: 'In Progress', institution: 'N/A', followups: [{ category: 'Physical Visit', text: "Irene promoted me to seek Waziri's guidance, this week I will be advancing my involvement after Waziri's advice", date: '10/19/2026, 12:21:09 AM' }] },
+            's1-1': { status: 'In Progress', institution: 'N/A', followups: [{ category: 'Physical Visit', text: 'requesting for a meeting with Anthony today evening', date: '10/19/2026, 12:21:09 AM' }] },
+            's1-5': { status: 'In Progress', institution: 'N/A', followups: [{ category: 'Physical Visit', text: 'I did followup with Kama Contractor and he assured me he did tender this morning he will be sending to me the outcome. I will update once I have the update', date: '10/19/2026, 12:21:09 AM' }] },
+            's1-23': { status: 'In Progress', institution: 'N/A', followups: [{ category: 'Physical Visit', text: 'Joan to do depository of all documentation. Where we have a drive we can do logs of document and history', date: '10/19/2026, 12:21:09 AM' }] },
+            's1-24': { status: 'In Progress', institution: 'N/A', followups: [] }, // No follow-ups yet
+            's1-3': { status: 'In Progress', institution: 'N/A', followups: [{ category: 'Physical Visit', text: "Monday we will be able to invoice once there's concurrency on the reconciliation.", date: '10/19/2026, 12:21:09 AM' }] },
+            's1-2': { status: 'In Progress', institution: 'N/A', followups: [{ category: 'Physical Visit', text: 'SA Khator is meant to disburse funds this week. Elsie let me know the best approach', date: '10/19/2026, 12:21:09 AM' }] },
+            's1-25': { status: 'In Progress', institution: 'Keep Vision - Pezesha', followups: [{ category: 'Virtual Meeting', text: 'There was a proposal from Pezesha as for security, Keep Vision gave a title as security. The loan was agreed to be a Debenture over the loan book.', date: '10/19/2026, 12:21:09 AM' }] },
+            's1-10': { status: 'In Progress', institution: 'Keep Vision', followups: [] },
+            's1-4': { status: 'In Progress', institution: 'KERRA', followups: [{ category: 'Physical Visit', text: 'Hence Eng Mbugua finalized I will be visiting Barabara plaza KENHA under guidance of Waziri to followup that funds be released to Nyandarua for the roads.', date: '10/19/2026, 12:21:09 AM' }] },
+            's1-6': { status: 'In Progress', institution: 'N/A', followups: [] },
+            's2-1': { status: 'In Progress', institution: 'KEPDA', followups: [{ category: 'Physical Visit', text: 'We have established the person handling the tender creation Mr. Benard and I got the contact, after updating Abraham am waiting for his direction on how we shall encourage him to finalise the work withing shortest time posible. This week we shall push the tender creation to be cmite and then we shall have visibility when E-GP will go live for tendering.', date: '10/19/2026, 12:21:09 AM' }] },
+            's2-2': { status: 'In Progress', institution: 'KEPDA', followups: [{ category: 'Physical Visit', text: 'Mr. Ndirangu and ENG Kinyanjiu met, and they agreed on two issues 1. Evaluation model, 2.timelines where they agreed the specs should be ready in 1½ weeks to be precise by 30th this month we should have the specs ready. Mr Ndirangu confirmed that before they proceed with the next step we shall convince and go through the preterminary spec status ie our team and kepda. This should be before 30th', date: '10/19/2026, 12:21:09 AM' }] },
+            's2-4': { status: 'In Progress', institution: 'KDC-TA', followups: [{ category: 'Physical Visit', text: 'Early in the morning I will be at the PS Cyrell Odede following up for his signature for the letter from KDC. I have been following up on Norah for a copy of the letter but I have not been successful. I hope this morning I will attain the letter I have asked Elsie to assist in reaching out to Norah.', date: '10/19/2026, 12:21:09 AM' }] },
+            's2-3': { status: 'In Progress', institution: 'Tourism Fund', followups: [{ category: 'Physical Visit', text: 'I have established contact with CEO Mr. Mandi this week I seek to meet him in his office by then I will have good brief of clarity on the followup.', date: '10/19/2026, 12:21:09 AM' }] }
+        };
+
+        let trackerData = JSON.parse(JSON.stringify(baseData)); 
+        const allTasks = [...trackerData.section1, ...trackerData.section2];
+
+        // Changed to v9 to force load the newly matched PDF data
+        const STORAGE_KEY = 'executiveTrackerData_v9';
+        
+        let userData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!userData) {
+            // If no data exists, load the pre-matched PDF data
+            userData = JSON.parse(JSON.stringify(preloadedData));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+        }
+
+        let currentTaskId = null;
+        let currentFilter = 'All'; 
 
         const statusConfig = {
-            'Pending': { progress: 0, badgeClass: 'badge-pending', color: '#64748b' },
-            'In Progress': { progress: 50, badgeClass: 'badge-progress', color: '#fbbf24' },
-            'Completed': { progress: 100, badgeClass: 'badge-completed', color: '#10b981' },
-            'On Hold': { progress: 25, badgeClass: 'badge-hold', color: '#ef4444' }
+            'Pending': { badgeClass: 'badge-pending', color: '#64748b' },
+            'In Progress': { badgeClass: 'badge-progress', color: '#fbbf24' },
+            'Completed': { badgeClass: 'badge-completed', color: '#10b981' },
+            'On Hold': { badgeClass: 'badge-hold', color: '#ef4444' }
         };
-
-        // --- Core Functions ---
 
         function saveData() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
         }
 
-        function addHistory(id, action, details) {
-            if (!userData[id]) userData[id] = { status: 'Pending', followups: [], history: [] };
-            if (!userData[id].history) userData[id].history = [];
-            
-            const timestamp = new Date().toLocaleString('en-GB', { 
-                day: '2-digit', month: 'short', year: 'numeric', 
-                hour: '2-digit', minute: '2-digit' 
-            });
+        // --- Render Master List at the top ---
+        function renderMasterList() {
+            const list1 = document.getElementById('master-list-1');
+            const list2 = document.getElementById('master-list-2');
+            list1.innerHTML = '';
+            list2.innerHTML = '';
 
-            const logEntry = { timestamp, action, details };
-            userData[id].history.unshift(logEntry); 
-            
-            saveData();
-            renderGlobalLog();
-            renderItemHistory(id);
-        }
-
-        function renderItemHistory(id) {
-            const historyContainer = document.getElementById(`history-list-${id}`);
-            if (!historyContainer) return;
-            
-            const history = userData[id] && userData[id].history ? userData[id].history : [];
-            
-            if (history.length === 0) {
-                historyContainer.innerHTML = `<div class="timeline-text" style="color: var(--text-muted); font-style: italic;">No history recorded yet.</div>`;
-                return;
-            }
-
-            historyContainer.innerHTML = history.map(item => `
-                <div class="timeline-item">
-                    <div class="timeline-date">${item.timestamp}</div>
-                    <div class="timeline-text">
-                        <span style="color: var(--accent-blue); font-weight: 600;">${item.action}:</span> 
-                        ${item.details}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderGlobalLog() {
-            const logContainer = document.getElementById('global-log-content');
-            let allLogs = [];
-
-            Object.keys(userData).forEach(id => {
-                if (userData[id].history) {
-                    let itemTitle = id;
-                    Object.values(trackerData).forEach(section => {
-                        const found = section.items.find(i => i.id === id);
-                        if (found) itemTitle = found.title;
-                    });
-
-                    userData[id].history.forEach(entry => {
-                        allLogs.push({ ...entry, itemId: id, itemTitle: itemTitle });
-                    });
-                }
-            });
-
-            allLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-            if (allLogs.length === 0) {
-                logContainer.innerHTML = `<div style="color: var(--text-muted); font-style: italic; padding: 10px;">No activities recorded yet. Start updating items to build your achievement history.</div>`;
-                return;
-            }
-
-            logContainer.innerHTML = allLogs.map(log => `
-                <div class="log-entry">
-                    <div class="log-time">${log.timestamp}</div>
-                    <div class="log-content">
-                        <span class="log-item-name">${log.itemTitle}</span>
-                        <span class="log-action">${log.action}</span>
-                        <span style="color: var(--text-muted); font-size: 13px;">&mdash; ${log.details}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        window.toggleHistory = function(id) {
-            const panel = document.getElementById(`history-${id}`);
-            if (panel.style.display === 'none' || panel.style.display === '') {
-                panel.style.display = 'block';
-                renderItemHistory(id);
-            } else {
-                panel.style.display = 'none';
-            }
-        };
-
-        // --- Edit Mode Logic (Main Card) ---
-        window.toggleEditMode = function(id) {
-            const card = document.getElementById(`card-${id}`);
-            const isEditing = card.classList.contains('editing');
-            const inputs = card.querySelectorAll('.stakeholder-box input, .task-owner input, #status-' + id);
-            const editBtn = document.getElementById(`edit-btn-${id}`);
-            const saveBtn = document.getElementById(`save-btn-${id}`);
-
-            if (isEditing) return; 
-
-            card.classList.add('editing');
-            inputs.forEach(input => {
-                if(input.tagName === 'SELECT') input.disabled = false;
-                else input.readOnly = false;
-            });
-            editBtn.style.display = 'none';
-            saveBtn.style.display = 'inline-block';
-        };
-
-        window.saveCardDetails = function(id) {
-            const card = document.getElementById(`card-${id}`);
-            const inputs = card.querySelectorAll('.stakeholder-box input, .task-owner input, #status-' + id);
-            
-            if (!userData[id]) userData[id] = { status: 'Pending', followups: [], history: [] };
-            const oldData = { ...userData[id] };
-            
-            let changes = [];
-
-            const ownerInput = card.querySelector('.task-owner input');
-            if (ownerInput && oldData.owner !== ownerInput.value.trim() && ownerInput.value.trim() !== '') {
-                changes.push(`Responsible Person changed from "${oldData.owner || 'Unknown'}" to "${ownerInput.value.trim()}"`);
-                userData[id].owner = ownerInput.value.trim();
-            }
-
-            const fields = {
-                'institution': 'Institution',
-                'contactPerson': 'Primary Contact',
-                'secondaryContact': 'Secondary Contact',
-                'phone': 'Phone Number',
-                'email': 'Email',
-                'officeLocation': 'Office Location'
-            };
-
-            Object.keys(fields).forEach(field => {
-                const input = card.querySelector(`input[oninput*="'${field}'"]`);
-                if (input && oldData[field] !== input.value.trim()) {
-                    changes.push(`${fields[field]} updated from "${oldData[field] || 'empty'}" to "${input.value.trim() || 'empty'}"`);
-                    userData[id][field] = input.value.trim();
-                }
-            });
-
-            const statusSelect = document.getElementById(`status-${id}`);
-            if (statusSelect && oldData.status !== statusSelect.value) {
-                changes.push(`Status changed from "${oldData.status}" to "${statusSelect.value}"`);
-                userData[id].status = statusSelect.value;
+            trackerData.section1.forEach(item => {
+                const data = userData[item.id] || {};
+                const status = data.status || 'Pending';
+                const dotColor = statusConfig[status].color;
                 
-                const bar = document.getElementById(`bar-${id}`);
-                if (bar) {
-                    const config = statusConfig[statusSelect.value];
-                    bar.style.width = `${config.progress}%`;
-                    bar.style.backgroundColor = config.color;
-                }
-                const badge = document.getElementById(`badge-${id}`);
-                badge.className = `status-badge ${statusConfig[statusSelect.value].badgeClass}`;
-                badge.textContent = statusSelect.value;
-            }
-
-            if (changes.length > 0) {
-                changes.forEach(change => addHistory(id, 'Data Corrected', change));
-                saveData();
-            }
-
-            card.classList.remove('editing');
-            inputs.forEach(input => {
-                if(input.tagName === 'SELECT') input.disabled = true;
-                else input.readOnly = true;
-            });
-            
-            const editBtn = document.getElementById(`edit-btn-${id}`);
-            const saveBtn = document.getElementById(`save-btn-${id}`);
-            editBtn.style.display = 'inline-block';
-            saveBtn.style.display = 'none';
-            editBtn.classList.remove('active');
-            
-            updateDashboardMetrics();
-        };
-
-        // --- Follow-up Logic ---
-        window.addFollowup = function(id) {
-            const categoryEl = document.getElementById(`category-${id}`);
-            const textEl = document.getElementById(`followup-text-${id}`);
-            const category = categoryEl.value;
-            const text = textEl.value.trim();
-
-            if (!text) return; 
-
-            const timestamp = new Date().toLocaleString('en-GB', { 
-                day: '2-digit', month: 'short', year: 'numeric', 
-                hour: '2-digit', minute: '2-digit' 
-            });
-            
-            if (!userData[id]) userData[id] = { status: 'Pending', followups: [], history: [] };
-            if (!userData[id].followups) userData[id].followups = [];
-
-            const newEntry = { id: Date.now(), timestamp, category, text };
-            userData[id].followups.unshift(newEntry); 
-            
-            addHistory(id, 'Follow-up Added', `${category}: "${text.substring(0, 40)}${text.length > 40 ? '...' : ''}"`);
-
-            textEl.value = ''; 
-            saveData(); 
-            renderFollowups(id); 
-        };
-
-        window.editFollowup = function(itemId, followupId) {
-            currentlyEditingFollowup = { itemId, followupId };
-            renderFollowups(itemId);
-        };
-
-        window.cancelFollowupEdit = function() {
-            currentlyEditingFollowup = null;
-            Object.keys(trackerData).forEach(sectionKey => {
-                trackerData[sectionKey].items.forEach(item => {
-                    renderFollowups(item.id);
-                });
-            });
-        };
-
-        window.saveFollowupEdit = function(itemId, followupId) {
-            const categoryEl = document.getElementById(`edit-category-${followupId}`);
-            const textEl = document.getElementById(`edit-text-${followupId}`);
-            if (!categoryEl || !textEl) return;
-
-            const newCategory = categoryEl.value;
-            const newText = textEl.value.trim();
-            if (!newText) return;
-
-            const followups = userData[itemId].followups;
-            const index = followups.findIndex(f => f.id === followupId);
-            if (index === -1) return;
-
-            const oldCategory = followups[index].category;
-            const oldText = followups[index].text;
-
-            followups[index].category = newCategory;
-            followups[index].text = newText;
-            followups[index].editedAt = new Date().toLocaleString('en-GB', { 
-                day: '2-digit', month: 'short', year: 'numeric', 
-                hour: '2-digit', minute: '2-digit' 
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `<span class="status-dot" style="background:${dotColor}; box-shadow: 0 0 5px ${dotColor};"></span> <span>${item.title}</span>`;
+                div.onclick = () => openModal(item.id);
+                list1.appendChild(div);
             });
 
-            let changeLog = '';
-            if (oldCategory !== newCategory) changeLog += `Category changed from "${oldCategory}" to "${newCategory}". `;
-            if (oldText !== newText) changeLog += `Text updated. `;
-            
-            addHistory(itemId, 'Follow-up Edited', changeLog || 'Follow-up details updated.');
+            trackerData.section2.forEach(item => {
+                const data = userData[item.id] || {};
+                const status = data.status || 'Pending';
+                const dotColor = statusConfig[status].color;
 
-            currentlyEditingFollowup = null;
-            saveData();
-            renderFollowups(itemId);
-        };
-
-        window.deleteFollowup = function(itemId, followupId) {
-            if (!confirm("Are you sure you want to delete this follow-up log?")) return;
-            
-            if (userData[itemId] && userData[itemId].followups) {
-                userData[itemId].followups = userData[itemId].followups.filter(f => f.id !== followupId);
-                saveData();
-                renderFollowups(itemId);
-                addHistory(itemId, 'Follow-up Deleted', 'A follow-up log entry was removed.');
-            }
-        };
-
-        function renderFollowups(id) {
-            const listEl = document.getElementById(`followup-list-${id}`);
-            if (!listEl) return;
-            const followups = userData[id] && userData[id].followups ? userData[id].followups : [];
-            
-            if (followups.length === 0) {
-                listEl.innerHTML = `<div class="empty-state">No follow-ups recorded yet. Log one above.</div>`;
-                return;
-            }
-
-            listEl.innerHTML = followups.map(f => {
-                const isEditing = currentlyEditingFollowup && currentlyEditingFollowup.itemId === id && currentlyEditingFollowup.followupId === f.id;
-
-                if (isEditing) {
-                    return `
-                        <div class="followup-item editing-followup">
-                            <div class="form-row">
-                                <select id="edit-category-${f.id}">
-                                    <option value="Physical Visit" ${f.category === 'Physical Visit' ? 'selected' : ''}>Physical Visit</option>
-                                    <option value="Calling" ${f.category === 'Calling' ? 'selected' : ''}>Calling</option>
-                                    <option value="Virtual Meeting" ${f.category === 'Virtual Meeting' ? 'selected' : ''}>Virtual Meeting</option>
-                                    <option value="Email" ${f.category === 'Email' ? 'selected' : ''}>Email</option>
-                                    <option value="Other" ${f.category === 'Other' ? 'selected' : ''}>Other</option>
-                                </select>
-                                <input type="text" id="edit-text-${f.id}" value="${f.text}">
-                                <button class="save-btn" onclick="saveFollowupEdit('${id}', ${f.id})">💾</button>
-                                <button class="edit-btn" onclick="cancelFollowupEdit()">✖</button>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    return `
-                        <div class="followup-item">
-                            <div class="followup-actions">
-                                <button class="edit-followup" onclick="editFollowup('${id}', ${f.id})" title="Edit this entry">✎</button>
-                                <button class="delete-followup" onclick="deleteFollowup('${id}', ${f.id})" title="Delete this entry">✖</button>
-                            </div>
-                            <div class="followup-meta">
-                                <span class="category-badge badge-${f.category.replace(/\s+/g, '-').toLowerCase()}">${f.category}</span>
-                                <span class="followup-date">${f.timestamp} ${f.editedAt ? `<span style="color: var(--accent-orange); font-size: 10px; margin-left: 5px;">(edited)</span>` : ''}</span>
-                            </div>
-                            <div class="followup-text">${f.text}</div>
-                        </div>
-                    `;
-                }
-            }).join('');
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `<span class="status-dot" style="background:${dotColor}; box-shadow: 0 0 5px ${dotColor};"></span> <span>${item.title}</span>`;
+                div.onclick = () => openModal(item.id);
+                list2.appendChild(div);
+            });
         }
 
+        // --- Initialize / Update UI ---
         function renderDashboard() {
-            const container = document.getElementById('dashboard');
-            container.innerHTML = '';
+            const grid = document.getElementById('project-grid');
+            grid.innerHTML = '';
+            
+            let counts = { 'All': allTasks.length, 'Pending': 0, 'In Progress': 0, 'Completed': 0, 'On Hold': 0 };
 
-            Object.keys(trackerData).forEach(sectionKey => {
-                const section = trackerData[sectionKey];
-                const columnDiv = document.createElement('div');
-                columnDiv.className = `section-column`;
+            allTasks.forEach(item => {
+                const data = userData[item.id] || {};
+                const status = data.status || 'Pending';
                 
-                const headerDiv = document.createElement('div');
-                headerDiv.className = 'section-header';
-                headerDiv.innerHTML = `
-                    <span>${section.title}</span>
-                    <span class="badge">${section.items.length} Items</span>
+                if (counts[status] !== undefined) counts[status]++;
+
+                if (currentFilter !== 'All' && status !== currentFilter) return;
+
+                const card = document.createElement('div');
+                card.className = 'task-card';
+                card.onclick = () => openModal(item.id);
+
+                const statusStyle = statusConfig[status];
+
+                card.innerHTML = `
+                    <div class="card-top">
+                        <div class="card-title">${item.title}</div>
+                        <span class="status-badge ${statusStyle.badgeClass}">${status}</span>
+                    </div>
+                    <div class="card-details">
+                        <div><strong>Institution:</strong> ${data.institution || 'Not Set'}</div>
+                        <div><strong>Contact:</strong> ${data.contactPerson || 'Not Set'}</div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="owner-tag">👤 ${item.owner}</span>
+                        <span class="followup-count">${(data.followups || []).length} Logs</span>
+                    </div>
                 `;
-                columnDiv.appendChild(headerDiv);
-
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'section-content';
-
-                section.items.forEach(item => {
-                    const data = userData[item.id] || { status: 'Pending', followups: [], history: [] };
-                    const config = statusConfig[data.status];
-                    
-                    const currentOwner = data.owner || item.owner;
-                    
-                    const institution = data.institution || '';
-                    const contactPerson = data.contactPerson || '';
-                    const secondaryContact = data.secondaryContact || '';
-                    const phone = data.phone || '';
-                    const email = data.email || '';
-                    const officeLocation = data.officeLocation || '';
-
-                    const card = document.createElement('div');
-                    card.className = 'task-card';
-                    card.id = `card-${item.id}`;
-                    card.innerHTML = `
-                        <div class="task-header">
-                            <div class="task-owner">
-                                <input type="text" value="${currentOwner}" readonly placeholder="Person Responsible" title="Click Edit to change">
-                            </div>
-                            <div class="task-actions">
-                                <button class="edit-btn" id="edit-btn-${item.id}" onclick="toggleEditMode('${item.id}')">✎ Edit</button>
-                                <button class="save-btn" id="save-btn-${item.id}" onclick="saveCardDetails('${item.id}')" style="display:none;">💾 Save</button>
-                                <div class="status-badge ${config.badgeClass}" id="badge-${item.id}">${data.status}</div>
-                            </div>
-                        </div>
-                        <div class="task-title">${item.title}</div>
-                        
-                        <div class="stakeholder-box" id="stakeholder-${item.id}">
-                            <div class="input-group full-width">
-                                <label>Institution / Organization</label>
-                                <input type="text" placeholder="Enter institution name" value="${institution}" readonly oninput="handleContactChange('${item.id}', 'institution', this.value)">
-                            </div>
-                            <div class="input-group full-width">
-                                <label>Primary Contact Person</label>
-                                <input type="text" placeholder="Enter contact person name" value="${contactPerson}" readonly oninput="handleContactChange('${item.id}', 'contactPerson', this.value)">
-                            </div>
-                            <div class="input-group full-width">
-                                <label>Secondary Contact Person (Optional)</label>
-                                <input type="text" placeholder="Add secondary contact if needed" value="${secondaryContact}" readonly oninput="handleContactChange('${item.id}', 'secondaryContact', this.value)">
-                            </div>
-                            <div class="input-group">
-                                <label>Phone Number</label>
-                                <input type="tel" placeholder="+254..." value="${phone}" readonly oninput="handleContactChange('${item.id}', 'phone', this.value)">
-                            </div>
-                            <div class="input-group">
-                                <label>Email Address</label>
-                                <input type="email" placeholder="name@institution.com" value="${email}" readonly oninput="handleContactChange('${item.id}', 'email', this.value)">
-                            </div>
-                            <div class="input-group full-width">
-                                <label>Physical Office Location</label>
-                                <input type="text" placeholder="Building, Street, City" value="${officeLocation}" readonly oninput="handleContactChange('${item.id}', 'officeLocation', this.value)">
-                            </div>
-                        </div>
-
-                        <div class="progress-container">
-                            <div class="progress-bar" id="bar-${item.id}" style="width: ${config.progress}%; background-color: ${config.color};"></div>
-                        </div>
-
-                        <div class="controls">
-                            <div class="control-row">
-                                <label for="status-${item.id}">Status:</label>
-                                <select id="status-${item.id}" data-status="${data.status}" disabled onchange="handleStatusChange('${item.id}', this)">
-                                    <option value="Pending" ${data.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                                    <option value="In Progress" ${data.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                                    <option value="Completed" ${data.status === 'Completed' ? 'selected' : ''}>Completed</option>
-                                    <option value="On Hold" ${data.status === 'On Hold' ? 'selected' : ''}>On Hold</option>
-                                </select>
-                            </div>
-                            
-                            <div class="followup-form">
-                                <div class="form-row">
-                                    <select id="category-${item.id}">
-                                        <option value="Physical Visit">Physical Visit</option>
-                                        <option value="Calling">Calling</option>
-                                        <option value="Virtual Meeting">Virtual Meeting</option>
-                                        <option value="Email">Email</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                    <input type="text" id="followup-text-${item.id}" placeholder="Enter follow-up details...">
-                                    <button class="add-btn" onclick="addFollowup('${item.id}')">+ Log</button>
-                                </div>
-                            </div>
-                            
-                            <div class="followup-list" id="followup-list-${item.id}">
-                                <!-- Rendered dynamically -->
-                            </div>
-                        </div>
-
-                        <button class="history-toggle" onclick="toggleHistory('${item.id}')">
-                            📜 View History & Audit Trail
-                        </button>
-                        <div class="history-panel" id="history-${item.id}">
-                            <div id="history-list-${item.id}"></div>
-                        </div>
-                    `;
-                    contentDiv.appendChild(card);
-                });
-
-                columnDiv.appendChild(contentDiv);
-                container.appendChild(columnDiv);
+                grid.appendChild(card);
             });
 
-            Object.keys(trackerData).forEach(sectionKey => {
-                trackerData[sectionKey].items.forEach(item => {
-                    renderFollowups(item.id);
-                });
-            });
+            document.getElementById('stat-total').innerText = counts['All'];
+            document.getElementById('stat-pending').innerText = counts['Pending'];
+            document.getElementById('stat-progress').innerText = counts['In Progress'];
+            document.getElementById('stat-completed').innerText = counts['Completed'];
 
-            updateDashboardMetrics();
-            renderGlobalLog();
+            renderMasterList();
         }
 
-        window.handleContactChange = function(id, field, value) {
-            if (!userData[id]) userData[id] = { status: 'Pending', followups: [], history: [] };
-            userData[id][field] = value;
-        };
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.kpi-card').forEach(el => el.classList.remove('active'));
+            let id = 'filter-All';
+            if (filter === 'Pending') id = 'filter-Pending';
+            if (filter === 'In Progress') id = 'filter-InProgress';
+            if (filter === 'Completed') id = 'filter-Completed';
+            document.getElementById(id).classList.add('active');
 
-        window.handleStatusChange = function(id, selectElement) {
-            // Handled by saveCardDetails
-        };
+            document.getElementById('view-title').innerText = `Showing: ${filter === 'All' ? 'All Projects' : filter + ' Projects'}`;
+            renderDashboard();
+        }
 
-        // --- NEW: PDF Export Functionality ---
-        window.exportPDF = function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'mm', 'a4'); // Landscape A4
+        // --- Modal Functions ---
+        function openModal(taskId) {
+            currentTaskId = taskId;
+            const item = allTasks.find(t => t.id === taskId);
+            const data = userData[taskId] || {}; 
+
+            document.getElementById('modal-title').innerText = item.title;
             
-            // Title
-            doc.setFontSize(18);
-            doc.setTextColor(30, 41, 59); // Dark Slate
-            doc.text("Project & Compliance Executive Report", 14, 22);
-            
-            doc.setFontSize(11);
-            doc.setTextColor(100, 116, 139); // Muted Slate
-            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+            document.getElementById('edit-owner').value = item.owner;
+            document.getElementById('edit-institution').value = data.institution || '';
+            document.getElementById('edit-contactPerson').value = data.contactPerson || '';
+            document.getElementById('edit-phone').value = data.phone || '';
+            document.getElementById('edit-secondaryContact').value = data.secondaryContact || '';
+            document.getElementById('edit-email').value = data.email || '';
+            document.getElementById('edit-status').value = data.status || 'Pending';
 
-            // Summary Stats
-            const total = document.getElementById('stat-total').textContent;
-            const pending = document.getElementById('stat-pending').textContent;
-            const progress = document.getElementById('stat-progress').textContent;
-            const completed = document.getElementById('stat-completed').textContent;
-            
-            doc.setFontSize(12);
-            doc.setTextColor(15, 23, 42);
-            doc.text(`Executive Summary: Total (${total}) | Pending (${pending}) | In Progress (${progress}) | Completed (${completed})`, 14, 40);
+            const logTextarea = document.getElementById('log-text');
+            logTextarea.value = '';
+            logTextarea.style.height = '45px'; 
 
-            // Prepare Table Data
-            let tableData = [];
-            
-            Object.keys(trackerData).forEach(sectionKey => {
-                const section = trackerData[sectionKey];
-                // Add Section Header Row
-                tableData.push([{ 
-                    content: section.title.toUpperCase(), 
-                    colSpan: 5, 
-                    styles: { fontStyle: 'bold', fillColor: [241, 245, 249], textColor: [15, 23, 42] } 
-                }]);
-                
-                section.items.forEach(item => {
-                    const data = userData[item.id] || { status: 'Pending', followups: [], history: [] };
-                    const currentOwner = data.owner || item.owner;
-                    const institution = data.institution || 'N/A';
-                    const status = data.status;
-                    
-                    let latestFollowup = 'No follow-ups yet';
-                    if (data.followups && data.followups.length > 0) {
-                        latestFollowup = `[${data.followups[0].category}] ${data.followups[0].text}`;
-                    }
+            renderFollowups(); 
+            switchTab('details');
+            document.getElementById('taskModal').classList.add('active');
+        }
 
-                    tableData.push([
-                        item.title,
-                        currentOwner,
-                        institution,
-                        status,
-                        latestFollowup
-                    ]);
-                });
+        function closeModal() {
+            document.getElementById('taskModal').classList.remove('active');
+            currentTaskId = null;
+            renderDashboard();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        function saveDetails() {
+            if (!currentTaskId) return;
+            if (!userData[currentTaskId]) userData[currentTaskId] = { followups: [] };
+
+            userData[currentTaskId].institution = document.getElementById('edit-institution').value;
+            userData[currentTaskId].contactPerson = document.getElementById('edit-contactPerson').value;
+            userData[currentTaskId].phone = document.getElementById('edit-phone').value;
+            userData[currentTaskId].secondaryContact = document.getElementById('edit-secondaryContact').value;
+            userData[currentTaskId].email = document.getElementById('edit-email').value;
+            userData[currentTaskId].status = document.getElementById('edit-status').value;
+
+            const item = allTasks.find(t => t.id === currentTaskId);
+            item.owner = document.getElementById('edit-owner').value;
+
+            saveData();
+            alert('Details saved successfully!');
+            renderDashboard();
+        }
+
+        // --- Followup Functions ---
+        function addFollowup() {
+            const category = document.getElementById('log-category').value;
+            const textarea = document.getElementById('log-text');
+            const text = textarea.value.trim();
+
+            if (!text) return alert('Please enter follow-up details.');
+
+            if (!userData[currentTaskId]) userData[currentTaskId] = { followups: [] };
+            if (!userData[currentTaskId].followups) userData[currentTaskId].followups = [];
+
+            userData[currentTaskId].followups.push({
+                category: category,
+                text: text,
+                date: new Date().toLocaleString()
             });
 
-            // Generate Table
-            doc.autoTable({
-                startY: 45,
-                head: [['Project Item', 'Responsible', 'Institution', 'Status', 'Latest Development / Follow-up']],
-                body: tableData,
-                theme: 'grid',
-                styles: { fontSize: 9, cellPadding: 3, textColor: [30, 41, 59] },
-                headStyles: { fillColor: [30, 41, 59], textColor: [255, 255, 255], fontStyle: 'bold' },
-                columnStyles: {
-                    0: { cellWidth: 50 },
-                    1: { cellWidth: 30 },
-                    2: { cellWidth: 50 },
-                    3: { cellWidth: 25 },
-                    4: { cellWidth: 'auto' }
-                },
-                didDrawPage: function (data) {
-                    // Footer
-                    const str = "Page " + doc.internal.getNumberOfPages();
-                    doc.setFontSize(8);
-                    doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
-                }
+            textarea.value = '';
+            textarea.style.height = '45px'; 
+
+            saveData();
+            renderFollowups(); 
+            renderDashboard();
+        }
+
+        function renderFollowups() {
+            const list = document.getElementById('modal-followup-list');
+            list.innerHTML = '';
+            
+            const data = userData[currentTaskId] || {};
+            const followups = data.followups || [];
+
+            if (followups.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">No follow-ups logged yet.</p>';
+                return;
+            }
+
+            [...followups].reverse().forEach((log) => {
+                let badgeClass = 'badge-other';
+                if(log.category === 'Physical Visit') badgeClass = 'badge-physical-visit';
+                if(log.category === 'Calling') badgeClass = 'badge-calling';
+                if(log.category === 'Virtual Meeting') badgeClass = 'badge-virtual-meeting';
+                if(log.category === 'Email') badgeClass = 'badge-email';
+
+                const div = document.createElement('div');
+                div.className = 'followup-item';
+                div.innerHTML = `
+                    <div class="followup-meta">
+                        <span class="category-badge ${badgeClass}">${log.category}</span>
+                        <span class="followup-date">${log.date}</span>
+                    </div>
+                    <div class="followup-text">${log.text}</div>
+                `;
+                list.appendChild(div);
             });
+        }
 
-            // Save PDF
-            doc.save(`Project_Compliance_Report_${new Date().toISOString().slice(0,10)}.pdf`);
-        };
-
-        window.exportData = function() {
+        // --- Data Import / Export ---
+        function exportData() {
             const dataStr = JSON.stringify(userData, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `Executive_Tracker_Backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `EXCO_Data_Backup_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
             URL.revokeObjectURL(url);
-        };
+        }
 
-        window.importData = function(event) {
+        function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const importedData = JSON.parse(e.target.result);
-                    if (confirm("This will overwrite your current dashboard data. Are you sure?")) {
-                        userData = importedData;
-                        saveData();
-                        renderDashboard();
-                    }
+                    const imported = JSON.parse(e.target.result);
+                    userData = imported;
+                    saveData();
+                    renderDashboard();
+                    alert('Data imported successfully!');
                 } catch (err) {
-                    alert("Invalid backup file format.");
+                    alert('Error parsing JSON file. Please ensure it is a valid backup.');
                 }
             };
             reader.readAsText(file);
-        };
-
-        window.clearAllData = function() {
-            if (confirm("Are you sure you want to clear all tracker data and history? This cannot be undone.")) {
-                localStorage.removeItem(STORAGE_KEY);
-                userData = {};
-                renderDashboard();
-            }
-        };
-
-        function updateDashboardMetrics() {
-            let total = 0;
-            let pending = 0;
-            let progress = 0;
-            let completed = 0;
-
-            Object.keys(trackerData).forEach(sectionKey => {
-                trackerData[sectionKey].items.forEach(item => {
-                    total++;
-                    const status = userData[item.id] ? userData[item.id].status : 'Pending';
-                    if (status === 'Pending') pending++;
-                    else if (status === 'In Progress') progress++;
-                    else if (status === 'Completed') completed++;
-                });
-            });
-
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-pending').textContent = pending;
-            document.getElementById('stat-progress').textContent = progress;
-            document.getElementById('stat-completed').textContent = completed;
+            event.target.value = ''; 
         }
 
-        // Initialize
+        function clearAllData() {
+            if(confirm("Are you sure you want to reset all data? This will delete all follow-up logs and custom fields.")) {
+                localStorage.removeItem(STORAGE_KEY);
+                userData = JSON.parse(JSON.stringify(preloadedData));
+                saveData();
+                renderDashboard();
+            }
+        }
+
+        // --- PDF Export Analysis ---
+        function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'pt', 'a4');
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+
+            doc.setFillColor(19, 30, 53); 
+            doc.rect(0, 0, pageWidth, 100, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.setFont("helvetica", "bold");
+            doc.text("EXCO Reporting Dashboard", 40, 45);
+            
+            doc.setFontSize(11);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(148, 163, 184);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 40, 65);
+
+            let counts = { 'Pending': 0, 'In Progress': 0, 'Completed': 0, 'On Hold': 0 };
+            allTasks.forEach(item => {
+                const status = userData[item.id] ? userData[item.id].status : 'Pending';
+                if (counts[status] !== undefined) counts[status]++;
+            });
+
+            doc.setTextColor(11, 17, 32);
+            doc.setFontSize(14);
+            doc.setFont("helvetica", "bold");
+            doc.text("Status Summary", 40, 130);
+
+            doc.autoTable({
+                startY: 145,
+                head: [['Total Projects', 'Pending', 'In Progress', 'Completed', 'On Hold']],
+                body: [[
+                    allTasks.length.toString(),
+                    counts['Pending'].toString(),
+                    counts['In Progress'].toString(),
+                    counts['Completed'].toString(),
+                    counts['On Hold'].toString()
+                ]],
+                theme: 'grid',
+                headStyles: { fillColor: [59, 130, 246], textColor: 255, fontStyle: 'bold' },
+                styles: { font: 'helvetica', fontSize: 11, halign: 'center' },
+                columnStyles: {
+                    0: { fontStyle: 'bold' },
+                    1: { textColor: [100, 116, 139], fontStyle: 'bold' },
+                    2: { textColor: [217, 119, 6], fontStyle: 'bold' },
+                    3: { textColor: [16, 185, 129], fontStyle: 'bold' },
+                    4: { textColor: [239, 68, 68], fontStyle: 'bold' }
+                }
+            });
+
+            const currentY = doc.lastAutoTable.finalY + 30;
+            doc.setFontSize(14);
+            doc.setFont("helvetica", "bold");
+            doc.text("Detailed Project Breakdown", 40, currentY);
+
+            const tableRows = allTasks.map(item => {
+                const data = userData[item.id] || {}; 
+                return [
+                    item.title,
+                    data.institution || '-',
+                    item.owner,
+                    data.status || 'Pending',
+                    (data.followups || []).length
+                ];
+            });
+
+            doc.autoTable({
+                startY: currentY + 15,
+                head: [['Project Name', 'Institution', 'Owner', 'Status', 'Logs']],
+                body: tableRows,
+                theme: 'striped',
+                headStyles: { fillColor: [38, 59, 94], textColor: 255 },
+                alternateRowStyles: { fillColor: [248, 250, 252] },
+                styles: { font: 'helvetica', fontSize: 9, cellPadding: 6 },
+                columnStyles: {
+                    0: { cellWidth: 180 },
+                    1: { cellWidth: 150 },
+                    2: { cellWidth: 80 },
+                    3: { cellWidth: 70, fontStyle: 'bold' },
+                    4: { cellWidth: 40, halign: 'center' }
+                },
+                didParseCell: function(data) {
+                    if (data.section === 'body' && data.column.index === 3) {
+                        const status = data.cell.raw;
+                        if (status === 'Pending') data.cell.styles.textColor = [100, 116, 139];
+                        if (status === 'In Progress') data.cell.styles.textColor = [217, 119, 6];
+                        if (status === 'Completed') data.cell.styles.textColor = [16, 185, 129];
+                        if (status === 'On Hold') data.cell.styles.textColor = [239, 68, 68];
+                    }
+                }
+            });
+
+            let hasLogs = false;
+            allTasks.forEach(item => {
+                const data = userData[item.id] || {};
+                if (data.followups && data.followups.length > 0) hasLogs = true;
+            });
+
+            if (hasLogs) {
+                doc.addPage();
+                doc.setTextColor(11, 17, 32);
+                doc.setFontSize(14);
+                doc.setFont("helvetica", "bold");
+                doc.text("Detailed Follow-up Activity Log", 40, 50);
+
+                let logRows = [];
+                allTasks.forEach(item => {
+                    const data = userData[item.id] || {}; 
+                    if (data.followups && data.followups.length > 0) {
+                        data.followups.forEach(log => {
+                            logRows.push([
+                                item.title,
+                                log.date,
+                                log.category,
+                                log.text
+                            ]);
+                        });
+                    }
+                });
+
+                doc.autoTable({
+                    startY: 65,
+                    head: [['Project', 'Date & Time', 'Type', 'Details']],
+                    body: logRows,
+                    theme: 'grid',
+                    headStyles: { fillColor: [16, 185, 129], textColor: 255 },
+                    styles: { font: 'helvetica', fontSize: 8, cellPadding: 5 },
+                    columnStyles: {
+                        0: { cellWidth: 100 },
+                        1: { cellWidth: 90 },
+                        2: { cellWidth: 70, fontStyle: 'bold' },
+                        3: { cellWidth: 'auto' }
+                    }
+                });
+            }
+
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(148, 163, 184);
+                doc.text(`Page ${i} of ${pageCount}`, pageWidth - 60, pageHeight - 20);
+                doc.text("Confidential - Executive Reporting", 40, pageHeight - 20);
+            }
+
+            doc.save(`EXCO_Analysis_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+        }
+
         renderDashboard();
     </script>
 </body>
